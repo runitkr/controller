@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>run.it.kr demo</h1>
+    <p>click to run your own runner instance</p>
+
+    <p><button id="btn" onclick="runit()">run.it!</button></p>
+
+    <script>
+      async function runit() {
+        const btn = document.getElementById("btn")
+
+        btn.disabled = true
+        btn.innerText = "running..."
+
+        const res = await fetch('/runners', {
+          method: "POST"
+        }).then((res) => res.json())
+
+        btn.innerText = "started. redirect in 30s..."
+        
+        setTimeout(() => {
+          window.location.replace("https://" + res.runnerId + ".run.it.kr")
+        }, 30 * 1000)
+      }
+    </script>
+  </body>
+</html>
