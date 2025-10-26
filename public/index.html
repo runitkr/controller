@@ -23,11 +23,11 @@
         }).then((res) => res.json())
         
         for (;;) {
-          const res = await fetch("https://" + res.runnerId + ".run.it.kr/healthz")
+          const res2 = await fetch("https://" + res.runnerId + ".run.it.kr/healthz")
             .then((res) => res.json())
             .catch(() => {})
 
-          if (res.status === 'alive')
+          if (res2.status === 'alive')
             break
 
           await sleep(1000)
