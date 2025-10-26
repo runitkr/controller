@@ -146,9 +146,20 @@ func main() {
 			},
 		}
 
-		ingressCtx.Create(context.TODO(), &ingress, metav1.CreateOptions{})
-		serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
-		deploymentCtx.Create(context.TODO(), &deployment, metav1.CreateOptions{})
+		_, err = ingressCtx.Create(context.TODO(), &ingress, metav1.CreateOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+
+		_, err = serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
+
+		_, err = deploymentCtx.Create(context.TODO(), &deployment, metav1.CreateOptions{})
+		if err != nil {
+			panic(err.Error())
+		}
 
 		return c.JSON(fiber.Map{
 			"success":  true,
