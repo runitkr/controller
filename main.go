@@ -8,6 +8,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
@@ -59,6 +60,7 @@ func main() {
 						},
 					},
 					Spec: corev1.PodSpec{
+						RuntimeClassName: ptr.To("gvisor"),
 						Containers: []corev1.Container{
 							{
 								Name:  "codeserver",
@@ -67,21 +69,12 @@ func main() {
 									"--auth=none",
 									"--disable-telemetry",
 								},
-								LivenessProbe: &corev1.Probe{
-									ProbeHandler: corev1.ProbeHandler{
-										Exec: &corev1.ExecAction{
-											Command: []string{
-												"curl",
-												"-f",
-												"http://localhost:8080/healthz",
-											},
-										},
+								Resources: corev1.ResourceRequirements{
+									Limits: corev1.ResourceList{
+										corev1.ResourceCPU:              resource.MustParse("100m"),
+										corev1.ResourceMemory:           resource.MustParse("100MiB"),
+										corev1.ResourceEphemeralStorage: resource.MustParse("10GiB"),
 									},
-									InitialDelaySeconds: 0,
-									TimeoutSeconds:      1,
-									SuccessThreshold:    1,
-									FailureThreshold:    10,
-									PeriodSeconds:       1,
 								},
 							},
 						},
