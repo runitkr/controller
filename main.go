@@ -170,7 +170,7 @@ func main() {
 	app.Listen(":8080")
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
 
 func randStringRunes(n int) string {
 	b := make([]rune, n)
