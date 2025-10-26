@@ -22,11 +22,8 @@
           method: "POST"
         }).then((res) => res.json())
 
-        btn.innerText = "started. redirect in 30s..."
         
-        setTimeout(() => {
-          window.location.replace("https://" + res.runnerId + ".run.it.kr")
-        }, 30 * 1000)
+        window.location.replace("https://" + res.runnerId + ".run.it.kr")
       }
     </script>
   </body>

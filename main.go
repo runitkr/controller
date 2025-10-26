@@ -67,6 +67,21 @@ func main() {
 									"--auth=none",
 									"--disable-telemetry",
 								},
+								ReadinessProbe: &corev1.Probe{
+									ProbeHandler: corev1.ProbeHandler{
+										Exec: &corev1.ExecAction{
+											Command: []string{
+												"curl",
+												"http://localhost:8080/healthz",
+											},
+										},
+									},
+									InitialDelaySeconds: 0,
+									TimeoutSeconds:      1,
+									SuccessThreshold:    1,
+									FailureThreshold:    3,
+									PeriodSeconds:       1,
+								},
 							},
 						},
 					},
@@ -101,19 +116,9 @@ func main() {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      runnerId,
 				Namespace: namespace,
-				Annotations: map[string]string{
-					"cert-manager.io/cluster-issuer": "letsencrypt",
-				},
 			},
 			Spec: netv1.IngressSpec{
 				IngressClassName: ptr.To("nginx"),
-				TLS: []netv1.IngressTLS{
-					{
-						Hosts: []string{
-							hostname,
-						},
-					},
-				},
 				Rules: []netv1.IngressRule{
 					{
 						Host: hostname,
@@ -144,10 +149,26 @@ func main() {
 		serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
 		ingressCtx.Create(context.TODO(), &ingress, metav1.CreateOptions{})
 
-		return c.JSON(fiber.Map{
-			"success":  true,
-			"runnerId": runnerId,
-		})
+		for {
+			pods, err := clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
+				LabelSelector: "id=" + runnerId,
+			})
+
+			if err != nil {
+				panic(err.Error())
+			}
+
+			for _, pod := range pods.Items {
+				for _, cond := range pod.Status.Conditions {
+					if cond.Type == corev1.PodReady && cond.Status == corev1.ConditionTrue {
+						return c.JSON(fiber.Map{
+							"success":  true,
+							"runnerId": runnerId,
+						})
+					}
+				}
+			}
+		}
 	})
 
 	app.Listen(":8080")
