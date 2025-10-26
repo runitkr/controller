@@ -27,7 +27,7 @@
             .then((res) => res.json())
             .catch(() => ({}))
 
-          if (res2.status === 'alive')
+          if (typeof res2.status === 'string')
             break
 
           await sleep(1000)
