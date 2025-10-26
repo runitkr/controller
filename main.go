@@ -72,8 +72,8 @@ func main() {
 								Resources: corev1.ResourceRequirements{
 									Limits: corev1.ResourceList{
 										corev1.ResourceCPU:              resource.MustParse("100m"),
-										corev1.ResourceMemory:           resource.MustParse("100MiB"),
-										corev1.ResourceEphemeralStorage: resource.MustParse("10GiB"),
+										corev1.ResourceMemory:           resource.MustParse("100Mi"),
+										corev1.ResourceEphemeralStorage: resource.MustParse("10Gi"),
 									},
 								},
 							},
