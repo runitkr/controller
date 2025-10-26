@@ -72,6 +72,7 @@ func main() {
 										Exec: &corev1.ExecAction{
 											Command: []string{
 												"curl",
+												"-f",
 												"http://localhost:8080/healthz",
 											},
 										},
@@ -79,7 +80,7 @@ func main() {
 									InitialDelaySeconds: 0,
 									TimeoutSeconds:      1,
 									SuccessThreshold:    1,
-									FailureThreshold:    3,
+									FailureThreshold:    10,
 									PeriodSeconds:       1,
 								},
 							},
