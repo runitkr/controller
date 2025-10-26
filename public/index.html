@@ -21,10 +21,24 @@
         const res = await fetch('/runners', {
           method: "POST"
         }).then((res) => res.json())
-
         
+        for (;;) {
+          const res = await fetch("https://" + res.runnerId + ".run.it.kr/healthz")
+            .then((res) => res.json())
+            .catch(() => {})
+
+          if (res.status === 'alive')
+            break
+
+          await sleep(1000)
+        }
+
         window.location.replace("https://" + res.runnerId + ".run.it.kr")
       }
+
+      const sleep = (ms) => 
+        new Promise((resolve) => 
+          setTimeout(resolve, ms))
     </script>
   </body>
 </html>

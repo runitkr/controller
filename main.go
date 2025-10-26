@@ -150,26 +150,10 @@ func main() {
 		serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
 		deploymentCtx.Create(context.TODO(), &deployment, metav1.CreateOptions{})
 
-		for {
-			pods, err := clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
-				LabelSelector: "id=" + runnerId,
-			})
-
-			if err != nil {
-				panic(err.Error())
-			}
-
-			for _, pod := range pods.Items {
-				for _, cond := range pod.Status.Conditions {
-					if cond.Type == corev1.PodReady && cond.Status == corev1.ConditionTrue {
-						return c.JSON(fiber.Map{
-							"success":  true,
-							"runnerId": runnerId,
-						})
-					}
-				}
-			}
-		}
+		return c.JSON(fiber.Map{
+			"success":  true,
+			"runnerId": runnerId,
+		})
 	})
 
 	app.Listen(":8080")
