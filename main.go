@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"math/rand"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	netv1 "k8s.io/api/networking/v1"
@@ -36,7 +36,7 @@ func main() {
 
 	app.Static("/", "./public")
 	app.Post("/runners", func(c *fiber.Ctx) error {
-		runnerId := uuid.New().String()
+		runnerId := randStringRunes(10)
 
 		deployment := appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
@@ -168,4 +168,14 @@ func main() {
 	})
 
 	app.Listen(":8080")
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randStringRunes(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
