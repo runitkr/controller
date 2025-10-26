@@ -67,7 +67,7 @@ func main() {
 									"--auth=none",
 									"--disable-telemetry",
 								},
-								ReadinessProbe: &corev1.Probe{
+								LivenessProbe: &corev1.Probe{
 									ProbeHandler: corev1.ProbeHandler{
 										Exec: &corev1.ExecAction{
 											Command: []string{
@@ -146,9 +146,9 @@ func main() {
 			},
 		}
 
-		deploymentCtx.Create(context.TODO(), &deployment, metav1.CreateOptions{})
-		serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
 		ingressCtx.Create(context.TODO(), &ingress, metav1.CreateOptions{})
+		serviceCtx.Create(context.TODO(), &service, metav1.CreateOptions{})
+		deploymentCtx.Create(context.TODO(), &deployment, metav1.CreateOptions{})
 
 		for {
 			pods, err := clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
